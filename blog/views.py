@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from account.models import AppUser
 from .models import Post, Tag, Like, Comment, Category
 from .permissions import IsOwnerOrAdmin
 from .serializers import PostSerializer, TagSerializer, CategorySerializer, CommentSerializer
@@ -39,10 +40,27 @@ class PostViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"message": "Post deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_my_posts(request, username=None):
+    if username:
+        print(username)
+        try:
+            user = AppUser.objects.get(username=username)
+        except AppUser.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    else:
+        user = request.user
+    posts = Post.objects.filter(owner=user)
+    serializer = PostSerializer(posts, many=True, fields=['pk', 'title', 'content'])
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(ModelViewSet):

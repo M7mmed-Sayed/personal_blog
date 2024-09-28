@@ -29,7 +29,8 @@ urlpatterns = [
         'put': 'update',  # Update
         'delete': 'destroy'  # Delete
     }), name='post-detail'),
-
+    path('my-posts/<str:username>/', views.get_my_posts, name='get_my_posts'),  # URL pattern for username
+    path('my-posts/', views.get_my_posts, name='current_user_posts'),
     # Categories Url
     path('category/', views.CategoryViewSet.as_view({
         'get': 'list'
