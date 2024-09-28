@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
     'account',
+    'blog',
 
 ]
 
@@ -125,9 +126,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+auth_class = [
+    'rest_framework.authentication.SessionAuthentication',
+    'account.authentication.TokenAuthentication',
+
+]
+permission_class = [
+    'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+]
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': auth_class,
+
 }

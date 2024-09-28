@@ -1,13 +1,12 @@
 import re
 
-from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
 from .models import AppUser
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     phone_number = serializers.CharField(write_only=True, required=True)
     confirm_password = serializers.CharField(write_only=True, required=True)
@@ -46,20 +45,4 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('confirm_password')
         user = AppUser.objects.create_user(**validated_data)
-        return user
-
-
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only=True)
-
-    def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-        if username is None or password is None:
-            raise serializers.ValidationError("Must include 'username' and 'password'.")
-
-        user = authenticate(username=username, password=password)
-        if user is None:
-            raise serializers.ValidationError("Invalid credentials.")
         return user
