@@ -19,7 +19,7 @@ Testing the APIs On Postman
       - username validation must be lowercase alpha  digits,- ,.
       - confirm Password Validation
 
-  - User ` Blog App`
+  - Blog ` Blog App`
     - Post,Comment,Like ,Category, and Tag Models
     - CRUD for Post,Category, and Tags
     - User can un/like post and comment to it
