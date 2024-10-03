@@ -15,10 +15,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework.permissions import AllowAny
 
 from . import views
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="mohamedsayed1167@gmail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(AllowAny,),
+)
 urlpatterns = [
+
     # Post Urls
     path('posts/', views.PostViewSet.as_view({
         'get': 'list'
@@ -56,7 +72,8 @@ urlpatterns = [
         'post': 'create',
         'get': 'list',
     }), name='comment-post'),
-    path('posts/comment/<int:pk>/', views.CommentViewSet.as_view({
+
+    path('comment/<int:pk>/', views.CommentViewSet.as_view({
         'get': 'retrieve',  # get
         'delete': 'destroy'  # Delete
     }), name='comment-post-datial'),

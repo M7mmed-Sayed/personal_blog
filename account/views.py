@@ -3,6 +3,7 @@ from rest_framework import status, permissions
 from rest_framework.authtoken.models import Token
 # Create your views here.
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -40,6 +41,15 @@ class UserProfileView(RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'username'
+    def get_object(self):
+        username = self.kwargs.get(self.lookup_field)
+        if username:
+            try:
+                return AppUser.objects.get(username=username)
+            except AppUser.DoesNotExist:
+                raise NotFound(f"User  does not exist.")
+        else:
+            return self.request.user
 
 
 user_profile_view = UserProfileView.as_view()
@@ -47,12 +57,13 @@ user_profile_view = UserProfileView.as_view()
 
 class LogoutView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserSerializer
 
     def post(self, request):
         if request.user.is_authenticated:
             request.user.auth_token.delete()
             logout(request)
-            return Response(status=status.HTTP_200_OK)
+            return Response({'message': 'logged out'},status=status.HTTP_200_OK)
         return Response({"detail": "User is not authenticated."}, status=status.HTTP_400_BAD_REQUEST)
 
 

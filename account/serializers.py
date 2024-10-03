@@ -8,9 +8,8 @@ from .models import AppUser
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    phone_number = serializers.CharField(write_only=True, required=True)
+    phone_number = serializers.CharField( required=True)
     confirm_password = serializers.CharField(write_only=True, required=True)
-
     class Meta:
         model = AppUser
         fields = (
